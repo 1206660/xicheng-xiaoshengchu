@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import './App.css'
 import { districts, schools } from './data/schools.json'
-import type { School } from './types'
-const typedSchools = schools as School[]
 import UserInfoForm from './components/UserInfoForm'
 import QuanjuVolunteer from './components/QuanjuVolunteer'
 import XuequVolunteer from './components/XuequVolunteer'
 import ValidationResult from './components/ValidationResult'
 import VolunteerResult from './components/VolunteerResult'
 import SchoolLibrary from './components/SchoolLibrary'
+import type { School } from './types'
+
+const typedSchools = schools as unknown as School[]
 
 type AppState = 'form' | 'fill' | 'result' | 'library'
 
@@ -36,7 +37,7 @@ function App() {
       errors.push('全区派位必须填报5所学校')
     }
 
-    const xuequRequiredCount = schools.filter(s => s.district.includes(selectedDistrict)).length
+    const xuequRequiredCount = typedSchools.filter(s => s.district.includes(selectedDistrict)).length
     if (xuequSelected.length !== xuequRequiredCount) {
       errors.push(`学区派位必须填报本学区全部${xuequRequiredCount}所学校`)
     }
@@ -88,7 +89,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-light">
-      {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -118,7 +118,6 @@ function App() {
 
         {state === 'fill' && (
           <div className="space-y-8">
-            {/* 用户信息卡片 */}
             <div className="bg-white rounded-xl p-6 shadow-card">
               <h2 className="text-lg font-semibold text-dark mb-4">填报信息</h2>
               <div className="grid grid-cols-3 gap-4 text-sm">
