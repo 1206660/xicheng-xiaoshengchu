@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { District } from '../types'
 
 interface Props {
@@ -6,16 +6,57 @@ interface Props {
   onSubmit: (district: string, primarySchool: string, preference: string) => void
 }
 
-const primarySchools = [
-  '德胜学区第一小学', '德胜学区第二小学', '什刹海小学', '西长安街小学',
-  '大栅栏小学', '新街口小学', '金融街小学', '陶然亭小学',
-  '展览路小学', '月坛小学', '广安门内小学', '广安门外小学'
-]
+// 学区对应小学数据
+const districtSchools: Record<string, string[]> = {
+  'desheng': [
+    '德胜学区第一小学', '德胜学区第二小学', '育翔小学', '西师附小', '五路通小学', '实验二小德胜校区'
+  ],
+  'shichahai': [
+    '什刹海小学', '厂桥小学', '黄城根小学', '雷锋小学', '鸦儿胡同小学'
+  ],
+  'xichangan': [
+    '西长安街小学', '实验二小', '自忠小学', '力学小学', '顺城街第一小学'
+  ],
+  'dazhalan': [
+    '大栅栏小学', '炭儿胡同小学', '实验小学', '新世纪实验小学'
+  ],
+  'xinjiekou': [
+    '新街口小学', '黄城根小学分校', '志成小学', '京师附小'
+  ],
+  'jinrongjie': [
+    '金融街小学', '实验二小涭水河分校', '宏庙小学', '西单小学'
+  ],
+  'taoranting': [
+    '陶然亭小学', '宣师一附小', '白纸坊小学', '半步桥小学'
+  ],
+  'zhanlanlu': [
+    '展览路小学', '进步小学', '西外附小', '建大附小'
+  ],
+  'yuetan': [
+    '月坛小学', '中古友谊小学', '三里河三小', '复兴门外一小'
+  ],
+  'guanganniu': [
+    '广安门内小学', '北京小学', '康乐里小学', '回民小学'
+  ],
+  'guanganmenwai': [
+    '广安门外小学', '北京小学天宁寺分校', '实验二小广外分校', '红莲小学'
+  ]
+}
 
 export default function UserInfoForm({ districts, onSubmit }: Props) {
   const [district, setDistrict] = useState('')
   const [primarySchool, setPrimarySchool] = useState('')
   const [preference, setPreference] = useState('score')
+  const [availableSchools, setAvailableSchools] = useState<string[]>([])
+
+  useEffect(() => {
+    if (district && districtSchools[district]) {
+      setAvailableSchools(districtSchools[district])
+      setPrimarySchool('') // 切换学区时清空已选小学
+    } else {
+      setAvailableSchools([])
+    }
+  }, [district])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,10 +97,11 @@ export default function UserInfoForm({ districts, onSubmit }: Props) {
             value={primarySchool}
             onChange={(e) => setPrimarySchool(e.target.value)}
             className="w-full px-4 py-3 border border-gray-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+            disabled={!district}
             required
           >
-            <option value="">请选择小学</option>
-            {primarySchools.map(s => (
+            <option value="">{district ? '请选择小学' : '请先选择学区'}</option>
+            {availableSchools.map(s => (
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
