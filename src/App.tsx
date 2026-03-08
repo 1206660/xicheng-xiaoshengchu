@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import './App.css'
 import { districts, schools } from './data/schools.json'
+import type { School } from './types'
+const typedSchools = schools as School[]
 import UserInfoForm from './components/UserInfoForm'
 import QuanjuVolunteer from './components/QuanjuVolunteer'
 import XuequVolunteer from './components/XuequVolunteer'
 import ValidationResult from './components/ValidationResult'
 import VolunteerResult from './components/VolunteerResult'
 import SchoolLibrary from './components/SchoolLibrary'
-import type { School } from './types'
 
 type AppState = 'form' | 'fill' | 'result' | 'library'
 
@@ -21,8 +22,8 @@ function App() {
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [validationWarnings, setValidationWarnings] = useState<string[]>([])
 
-  const availableQuanjuSchools = schools.filter(s => s.type !== 'area')
-  const availableXuequSchools = schools.filter(s => 
+  const availableQuanjuSchools = typedSchools.filter(s => s.type !== 'area')
+  const availableXuequSchools = typedSchools.filter(s => 
     (s.type !== 'all' || s.district.includes(selectedDistrict)) && 
     !quanjuSelected.some(q => q.schoolId === s.schoolId)
   )
@@ -170,7 +171,7 @@ function App() {
         )}
 
         {state === 'library' && (
-          <SchoolLibrary schools={schools} districts={districts} />
+          <SchoolLibrary schools={typedSchools} districts={districts} />
         )}
       </main>
 

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -6,7 +5,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
+  type DragEndEvent,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -18,6 +17,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import type { School } from '../types'
 import { schools } from '../data/schools.json'
+const typedSchools = schools as School[]
 
 interface Props {
   selected: School[]
@@ -105,7 +105,7 @@ export default function XuequVolunteer({ selected, onChange, availableSchools, g
 
   const handleAutoFill = () => {
     // 自动加载本学区所有学校，过滤已选的全区派位学校
-    const xuequSchools = schools.filter(s => s.district.includes(districtId))
+    const xuequSchools = typedSchools.filter(s => s.district.includes(districtId))
     const filtered = xuequSchools.filter(s => !availableSchools.some(a => a.schoolId === s.schoolId))
     // 按热度从高到低排序
     const sorted = filtered.sort((a, b) => b.level - a.level)
